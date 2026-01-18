@@ -17,10 +17,12 @@ export class StorageService {
 
     constructor(vault: Vault, configDir: string, pathManager: PathManager) {
         this.vault = vault;
-        this.configDir = configDir;
+        // Extract just the plugin name from the full path
+        // configDir might be ".obsidian/plugins/ai-note" or just "ai-note"
+        this.configDir = configDir.replace(/^\.obsidian\/plugins\//, '').replace(/^\/+/, '');
         this.pathManager = pathManager;
         console.log('[StorageService] Initialized');
-        console.log(`[StorageService] Config dir: ${configDir}`);
+        console.log(`[StorageService] Config dir: ${configDir} -> ${this.configDir}`);
     }
 
     async initialize(): Promise<void> {
