@@ -1,0 +1,15 @@
+{
+  "before": {
+    "inbox": ["note1.md", "note2.md", "note3.md"],
+    "archives": []
+  },
+  "after": {
+    "inbox": [],
+    "archives": ["2024/note1.md", "2024/note2.md", "2024/note3.md"]
+  },
+  "metadata": {
+    "operation": "archive",
+    "timestamp": 1704110400000,
+    "count": 3
+  }
+}

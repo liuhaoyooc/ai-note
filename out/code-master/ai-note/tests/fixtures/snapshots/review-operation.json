@@ -1,0 +1,20 @@
+{
+  "before": {
+    "note": {
+      "path": "draft-note.md",
+      "content": "# Draft\n\nIncomplete content",
+      "status": "draft"
+    }
+  },
+  "after": {
+    "note": {
+      "path": "draft-note.md",
+      "content": "# Draft\n\nIncomplete content\n\n## Review Comments\n\n- Good start\n- Needs more detail",
+      "status": "reviewed"
+    }
+  },
+  "metadata": {
+    "operation": "review",
+    "timestamp": 1704110400000
+  }
+}

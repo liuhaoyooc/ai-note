@@ -1,0 +1,20 @@
+[
+  {
+    "prompt": "Archive this note to the Archives folder",
+    "response": "Successfully archived the note to Archives/2024/test-note.md",
+    "timestamp": 1704110400000,
+    "metadata": {
+      "action": "archive",
+      "targetFolder": "Archives/2024"
+    }
+  },
+  {
+    "prompt": "Archive multiple notes",
+    "response": "Successfully archived 3 notes to Archives/2024/",
+    "timestamp": 1704110460000,
+    "metadata": {
+      "action": "archive-batch",
+      "count": 3
+    }
+  }
+]

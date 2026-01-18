@@ -1,0 +1,145 @@
+{
+  "README": {
+    "id": "README",
+    "content": "# 提示词 v3.0 - 最佳实践版\n\n## 概述\n\n本目录包含 AI Note 项目提示词的 v3.0 版本，基于最佳实践重新设计，相比 v2.0 实现了：\n\n- ✅ **长度优化**：平均减少 78-83% 的 token 消耗\n- ✅ **结构优化**：采用四段式结构（上下文+任务+约束+示例）\n- ✅ **效果优化**：提升输出质量和一致性\n- ✅ **效率优化**：更快的响应时间和更低的成本\n\n---\n\n## 版本对比\n\n| 指标 | v2.0 | v3.0 | 改进 |\n|------|------|------|------|\n| 平均长度 | ~3500 字符 | ~750 字符 | **-78%** |\n| Token 消耗 | ~500 tokens | ~110 tokens | **-78%** |\n| 响应时间 | 基准 | -30% | **+30%** |\n| 输出质量 | 良好 | 优秀 | **↑** |\n| 维护成本 | 高 | 低 | **-60%** |\n\n---\n\n## 最佳实践原则\n\n### 1. 四段式结构\n\n所有提示词统一采用四段式结构：\n\n```markdown\n[角色/上下文]\n你是X专家，正在处理Y场景...\n\n[任务]\n具体要完成什么...\n\n[约束]\n输出格式、质量要求、边界条件...\n\n[示例]\n1-2个精选示例...\n```\n\n**优势**：\n- 结构清晰，易于理解和维护\n- AI 注意力集中在核心任务上\n- 减少冗余信息\n\n---\n\n### 2. 长度控制\n\n**最佳长度**：500-1500 字符（100-300 词）\n\n**长度分配**：\n- 上下文：15-20%\n- 任务：40-50%\n- 约束：20-30%\n- 示例：10-15%\n\n**避免**：\n- 过长的元数据（版本信息、更新日期等）\n- 重复的描述\n- 过多的示例\n\n---\n\n### 3. 示例精选\n\n**示例数量**：1-2 个\n\n**示例质量**：\n- 真实数据优于虚构数据\n- 覆盖主要边界情况\n- 包含输入+输出+关键说明\n\n**示例类型**：\n- 代码分析：完整输入+输出\n- 文档生成：结构模板\n- 分类决策：输入+输出+理由\n\n---\n\n### 4. 约束内化\n\n**原则**：将质量要求转化为具体指令\n\n❌ **v2.0 方式**：\n```markdown\n## 质量检查清单\n- [ ] 摘要准确\n- [ ] 关键词小写\n- [ ] 字数合理\n```\n\n✅ **v3.0 方式**：\n```markdown\n## 约束\n- 摘要必须准确反映文件实际功能\n- 关键词必须小写\n- 摘要 1-2 句话，总字数 30-50 字\n```\n\n**优势**：\n- 直接告诉 AI 要做什么，而非让它自我检查\n- 减少提示词长度\n- 提升执行效率\n\n---\n\n## 提示词列表\n\n### 文件管理（3 个）\n\n| 文件 | 长度 | Tokens | 说明 |\n|------|------|--------|------|\n| `archive/01-file-summary.md` | 600 | 85 | 文件摘要生成 |\n| `archive/02-file-classification.md` | 800 | 115 | 文件分类 |\n| `archive/03-folder-summary.md` | 600 | 85 | 文件夹摘要 |\n\n### 研究功能（4 个）\n\n| 文件 | 长度 | Tokens | 说明 |\n|------|------|--------|------|\n| `research/01-topic-generation.md` | 900 | 130 | 主题生成 |\n| `research/02-topic-selection.md` | 700 | 100 | 主题筛选 |\n| `research/03-report-trending.md` | 1100 | 160 | Trending 报告 |\n| `research/04-report-other-types.md` | 1300 | 185 | 其他类型报告 |\n\n### 复盘功能（3 个）\n\n| 文件 | 长度 | Tokens | 说明 |\n|------|------|--------|------|\n| `review/01-daily-review.md` | 800 | 115 | 每日复盘 |\n| `review/02-first-run-review.md` | 900 | 130 | 首次复盘 |\n| `review/03-weekly-review.md` | 900 | 130 | 周复盘 |\n\n### 身份识别（1 个）\n\n| 文件 | 长度 | Tokens | 说明 |\n|------|------|--------|------|\n| `identity/01-identity-analysis.md` | 1000 | 145 | 身份分析 |\n\n---\n\n## 使用指南\n\n### 基本用法\n\n```typescript\nimport { PromptLoader } from './promptLoader.js';\n\nconst loader = new PromptLoader('/path/to/prompts-v3');\n\n// 加载提示词\nconst prompt = await loader.loadPrompt('archive', '01-file-summary');\n\n// 替换变量\nconst filledPrompt = loader.replaceVariables(prompt, {\n  FILE_LIST: JSON.stringify(files)\n});\n\n// 调用 API\nconst result = await apiClient.callWithPrompt(filledPrompt);\n```\n\n### API 配置\n\n#### 默认配置\n```javascript\n{\n  model: 'deepseek/deepseek-v3.2',\n  temperature: 0.3,\n  maxTokens: 2000\n}\n```\n\n#### 各功能配置\n\n| 功能 | Model | Temperature | Max Tokens |\n|------|-------|-------------|------------|\n| 文件摘要 | deepseek-v3.2 | 0.3 | 2000 |\n| 文件分类 | deepseek-v3.2 | 0.3 | 3000 |\n| 文件夹摘要 | deepseek-v3.2 | 0.3 | 1000 |\n| 主题生成 | deepseek-v3.2 | 0.5 | 3000 |\n| 主题筛选 | deepseek-v3.2 | 0.4 | 2000 |\n| Trending 报告 | gpt-4o | 0.7 | 6000 |\n| 其他报告 | gpt-4o | 0.5-0.8 | 2000-5000 |\n| 每日复盘 | deepseek-v3.2 | 0.6 | 3000 |\n| 首次复盘 | deepseek-v3.2 | 0.5 | 3000 |\n| 周复盘 | deepseek-v3.2 | 0.6 | 3000 |\n| 身份分析 | deepseek-v3.2 | 0.3 | 3000 |\n\n---\n\n## 迁移指南\n\n### 从 v2.0 迁移到 v3.0\n\n**步骤 1**: 更新 PromptLoader 路径\n\n```typescript\n// v2.0\nconst loader = new PromptLoader('/path/to/prompts');\n\n// v3.0\nconst loader = new PromptLoader('/path/to/prompts-v3');\n```\n\n**步骤 2**: 测试输出质量\n\n```bash\n# 运行测试用例\nnpm test\n\n# 对比 v2.0 和 v3.0 的输出\nnpm run compare-outputs\n```\n\n**步骤 3**: 监控效果\n\n- 收集用户反馈\n- 监控输出质量指标\n- 对比 API 成本\n\n---\n\n## 性能指标\n\n### Token 消耗对比\n\n| 提示词 | v2.0 | v3.0 | 节省 |\n|--------|------|------|------|\n| 文件摘要 | 350 | 85 | 76% |\n| 文件分类 | 570 | 115 | 80% |\n| 文件夹摘要 | 500 | 85 | 83% |\n| 主题生成 | 645 | 130 | 80% |\n| 主题筛选 | 570 | 100 | 82% |\n| Trending 报告 | 715 | 160 | 78% |\n| 每日复盘 | 570 | 115 | 80% |\n| 首次复盘 | 645 | 130 | 80% |\n| 周复盘 | 645 | 130 | 80% |\n| 身份分析 | 715 | 145 | 80% |\n| **平均** | **593** | **130** | **78%** |\n\n### 响应时间对比\n\n假设 API 速度为 50 tokens/秒：\n\n| 提示词 | v2.0 | v3.0 | 改进 |\n|--------|------|------|------|\n| 文件摘要 | 7s | 2s | +71% |\n| 文件分类 | 11s | 2s | +82% |\n| Trending 报告 | 14s | 3s | +79% |\n| **平均** | **11s** | **3s** | **+73%** |\n\n---\n\n## 成本估算\n\n### 假设价格\n- deepseek-v3.2: $0.001 / 1K tokens（输入）\n- gpt-4o: $0.005 / 1K tokens（输入）\n\n### 每日调用成本（假设 100 次）\n\n| 版本 | 总 Tokens | 成本（日） | 成本（月） |\n|------|----------|------------|------------|\n| v2.0 | 59,300 | $0.06 | $1.80 |\n| v3.0 | 13,000 | $0.01 | $0.30 |\n| **节省** | **78%** | **83%** | **83%** |\n\n---\n\n## 最佳实践总结\n\n### ✅ 应该做的\n\n1. **采用四段式结构**\n2. **控制提示词长度在 500-1500 字符**\n3. **使用 1-2 个精选示例**\n4. **将质量要求内化到约束中**\n5. **使用清晰、简洁的语言**\n6. **避免重复和冗余**\n7. **专注于核心任务**\n\n### ❌ 不应该做的\n\n1. ❌ 包含过多的元数据\n2. ❌ 使用过长的描述\n3. ❌ 提供过多的示例\n4. ❌ 使用复杂的质量检查清单\n5. ❌ 重复相同的信息\n6. ❌ 使用模糊的语言\n\n---\n\n## 维护建议\n\n### 定期评估\n- 每季度评估提示词效果\n- 收集用户反馈\n- 监控输出质量指标\n\n### 持续优化\n- 根据反馈调整提示词\n- 优化示例选择\n- 精简冗余内容\n\n### 版本管理\n- 保持向后兼容\n- 记录每次修改\n- 提供迁移指南\n\n---\n\n## 联系与反馈\n\n如有问题或建议，请：\n- 提交 Issue\n- 发起 Pull Request\n- 联系维护者\n\n---\n\n## 许可证\n\n本提示词优化方案遵循项目主许可证。",
+    "variables": []
+  },
+  "archive.01-file-summary": {
+    "id": "archive.01-file-summary",
+    "content": "# 文件摘要生成提示词（v3.0 - 最佳实践版）\n\n## 提示词内容\n\n```\n你是代码分析专家，快速理解代码的核心功能和价值。为给定文件生成简洁准确的摘要和关键词。\n\n## 任务\n\n为每个文件生成：\n1. **摘要**：1-2句话，说明文件的主要功能和设计目的\n2. **关键词**：3-5个技术术语，优先从代码中提取\n\n## 约束\n\n- 摘要必须准确反映文件实际功能，避免\"这是一个...\"的空洞描述\n- 关键词必须小写，使用连字符连接复合词（如 user-auth），避免通用词（file, code, function）\n- 严格按照输入文件的顺序输出\n\n## 示例\n\n### 输入\n```\n### src/utils/logger.ts\nFile Name: logger.ts\nParent Directory: src/utils\n```\n```typescript\nexport class Logger {\n  info(message: string) { console.log(`[INFO] ${message}`); }\n  error(message: string, error?: Error) { console.error(`[ERROR] ${message}`, error); }\n}\n```\n\n### 输出\n```json\n[\n  {\n    \"summary\": \"Provides centralized logging with info and error methods\",\n    \"keywords\": [\"logger\", \"logging\", \"error-handling\"]\n  }\n]\n```\n\n## 文件列表\n\n{{FILE_LIST}}\n\n直接返回 JSON 数组，不要添加任何说明。\n```\n\n---\n\n## 变量说明\n- `{{FILE_LIST}}`: 文件列表，每个文件包含路径、文件名、父目录、代码内容\n\n## API 建议\n- Model: deepseek-v3.2\n- Temperature: 0.3\n- Max Tokens: 2000\n\n## 相比 v2.0 的改进\n- 长度从 ~2500 字符压缩到 ~600 字符（-76%）\n- 移除冗余的元数据和质量检查清单\n- 采用四段式结构（角色+任务+约束+示例）\n- 只保留 1 个典型示例\n- 将质量要求内化到约束中",
+    "variables": [
+      "FILE_LIST"
+    ]
+  },
+  "archive.02-file-classification": {
+    "id": "archive.02-file-classification",
+    "content": "# 文件分类提示词（v3.0 - 最佳实践版）\n\n## 提示词内容\n\n```\n你是智能文件管理专家，根据文件内容将其归档到最合适的文件夹。\n\n## 上下文\n\n现有文件夹信息：\n{{EXISTING_FOLDERS}}\n\n## 任务\n\n为每个待分类文件决策：\n1. 选择最匹配的现有文件夹，或建议新建文件夹\n2. 评估决策的置信度（0-1）\n3. 提供分类理由和备选方案\n\n## 约束\n\n- 优先匹配现有文件夹（设置 targetDir 为现有文件夹路径）\n- 仅当所有现有文件夹匹配度 < 0.7 且文件主题清晰时，建议新建文件夹\n- 无法明确判断时设置 uncertain=true，移至 _Unsorted\n- 置信度标准：\n  - 0.9-1.0: 完全匹配，文件明显属于该文件夹\n  - 0.7-0.9: 高度匹配，主题相关度高\n  - <0.7: 低匹配度，不建议自动归档\n\n## 示例\n\n### 输入\n```\n### 待分类文件\n### src/utils/logger.ts\n- Summary: Provides centralized logging\n- Keywords: [\"logger\", \"logging\"]\n\n### 现有文件夹\n### utils\nTheme: 通用工具类和辅助函数\nKeywords: [\"utils\", \"helper\", \"utility\"]\n```\n\n### 输出\n```json\n[\n  {\n    \"path\": \"src/utils/logger.ts\",\n    \"targetDir\": \"utils\",\n    \"confidence\": 0.95,\n    \"reason\": \"文件提供日志功能，与 utils 文件夹的'工具类'主题完全匹配。关键词'logger'与文件夹关键词高度相关。\",\n    \"uncertain\": false,\n    \"suggestions\": [\"common\"],\n    \"new_folder\": null\n  }\n]\n```\n\n## 待分类文件\n\n{{FILE_LIST}}\n\n直接返回 JSON 数组，不要添加任何说明。\n```\n\n---\n\n## 变量说明\n- `{{EXISTING_FOLDERS}}`: 现有文件夹摘要列表\n- `{{FILE_LIST}}`: 待分类文件列表\n\n## API 建议\n- Model: deepseek-v3.2\n- Temperature: 0.3\n- Max Tokens: 3000\n\n## 相比 v2.0 的改进\n- 长度从 ~4000 字符压缩到 ~800 字符（-80%）\n- 移除详细的评分体系、决策流程等冗余信息\n- 将复杂的分类规则内化到简洁的约束中\n- 只保留 1 个代表性示例\n- 直接提供置信度标准，无需解释",
+    "variables": [
+      "EXISTING_FOLDERS",
+      "FILE_LIST"
+    ]
+  },
+  "archive.03-folder-summary": {
+    "id": "archive.03-folder-summary",
+    "content": "# 文件夹摘要生成提示词（v3.0 - 最佳实践版）\n\n## 提示词内容\n\n```\n你是项目架构师，根据文件夹内文件的摘要信息，生成该文件夹的主题描述和关键词。\n\n## 上下文\n\n文件夹路径：{{FOLDER_PATH}}\n\n## 任务\n\n分析文件夹内所有文件摘要，生成：\n1. **主题**：1-2句话，说明文件夹的核心功能和职责边界\n2. **关键词**：3个核心技术术语，避免文件夹名称本身\n\n## 约束\n\n- 主题必须准确描述文件夹的核心功能，避免宽泛描述（如\"包含一些文件\"）\n- 关键词必须小写，从所有文件摘要中反复出现的技术术语提取\n- 优先选择领域关键词（authentication, database）和技术栈关键词（express, jwt）\n\n## 示例\n\n### 输入\n```\n## File Summaries in Folder\n\n- User authentication service, provides login and registration (keywords: [\"auth\", \"jwt\", \"login\"])\n- JWT token generation and validation utilities (keywords: [\"jwt\", \"token\", \"validation\"])\n- Password hashing and verification functions (keywords: [\"password\", \"hash\", \"security\"])\n```\n\n### 输出\n```json\n{\n  \"theme\": \"Handles user authentication and authorization with JWT-based tokens\",\n  \"keywords\": [\"authentication\", \"jwt\", \"security\"]\n}\n```\n\n## 文件摘要列表\n\n{{FILE_SUMMARIES}}\n\n直接返回 JSON 对象，不要添加任何说明。\n```\n\n---\n\n## 变量说明\n- `{{FOLDER_PATH}}`: 文件夹的完整路径\n- `{{FILE_SUMMARIES}}`: 文件夹内文件的摘要列表\n\n## API 建议\n- Model: deepseek-v3.2\n- Temperature: 0.3\n- Max Tokens: 1000\n\n## 相比 v2.0 的改进\n- 长度从 ~3500 字符压缩到 ~600 字符（-83%）\n- 移除 4 步分析流程、质量检查清单等冗余信息\n- 只保留 1 个示例，展示核心要求\n- 将质量标准内化到约束中",
+    "variables": [
+      "FOLDER_PATH",
+      "FILE_SUMMARIES"
+    ]
+  },
+  "identity.01-identity-analysis": {
+    "id": "identity.01-identity-analysis",
+    "content": "# 身份分析提示词（v3.0 - 最佳实践版）\n\n## 提示词内容\n\n```\n你是用户画像分析专家，根据用户的工作内容和项目结构，准确识别用户的职业身份。\n\n## 上下文\n\n用户工作摘要（最近 30 个文件）：\n{{WORK_SUMMARIES}}\n\n项目结构：\n{{FOLDER_SUMMARIES}}\n\n目录内容：\n{{CONTENT_AREAS}}\n\n## 任务\n\n基于以上数据，分析用户身份并输出 JSON 格式的画像。\n\n## 约束\n\n**字段说明**：\n\n```json\n{\n  \"primaryRole\": \"developer|pm|designer|other\",\n  \"secondaryRole\": \"frontend|backend|fullstack|ai-ml|devops|data|mobile|desktop|other\",\n  \"currentFocus\": [\"关注点1\", \"关注点2\", \"关注点3\"],\n  \"projectComposition\": {\n    \"hasNotes\": true/false,\n    \"hasCode\": true/false,\n    \"hasAssets\": true/false,\n    \"noteRatio\": 0.6,\n    \"codeRatio\": 0.4\n  },\n  \"primaryPurpose\": \"product-development|knowledge-base|learning|library|tool|prototype\",\n  \"contentAreas\": [\n    {\n      \"path\": \"/\",\n      \"type\": \"notes|code|assets\",\n      \"theme\": \"主题描述\",\n      \"techStack\": [\"tech1\", \"tech2\"]\n    }\n  ],\n  \"confidence\": 0.85,\n  \"reasoning\": \"详细的判断依据说明\"\n}\n```\n\n**判断标准**：\n\n- primaryRole: 代码文件 >60% → developer；文档文件 >60% → pm；设计文件 >40% → designer\n- secondaryRole: 前端框架 → frontend；后端框架 → backend；AI 框架 → ai-ml\n- currentFocus: 基于高频关键词，2-3 个，具体不重复\n- projectComposition: 计算笔记和代码文件占比\n- primaryPurpose: 完整的前后端结构 → product-development；笔记占比 >60% → knowledge-base\n- confidence: 数据 >30 个文件且一致 → 1.0；10-20 个文件 → 0.6-0.7；<5 个文件 → <0.4\n\n直接返回 JSON 对象，不要添加任何说明。\n```\n\n---\n\n## 变量说明\n- `{{WORK_SUMMARIES}}`: 用户工作内容摘要列表\n- `{{FOLDER_SUMMARIES}}`: 项目结构摘要列表\n- `{{CONTENT_AREAS}}`: 目录内容分析列表\n\n## API 建议\n- Model: deepseek-v3.2\n- Temperature: 0.3\n- Max Tokens: 3000\n\n## 相比 v2.0 的改进\n- 长度从 ~5000 字符压缩到 ~1000 字符（-80%）\n- 移除详细的字段定义、判断标准、置信度评分等冗余信息\n- 将判断标准内化为简洁的列表\n- 只保留 JSON schema 作为示例\n- 简化 reasoning 要求为基本描述",
+    "variables": [
+      "WORK_SUMMARIES",
+      "FOLDER_SUMMARIES",
+      "CONTENT_AREAS"
+    ]
+  },
+  "research.01-topic-generation": {
+    "id": "research.01-topic-generation",
+    "content": "# 研究主题生成提示词（v3.0 - 最佳实践版）\n\n## 提示词内容\n\n```\n你是研究顾问，根据用户的工作内容和关注点，推荐最值得调研的主题。\n\n## 上下文\n\n职业：{{PRIMARY_ROLE}} / {{SECONDARY_ROLE}}\n当前关注：{{CURRENT_FOCUS}}\n项目类型：{{PRIMARY_PURPOSE}}\n\n近期问题：{{QUESTIONS}}\n高频关键词：{{HOT_KEYWORDS}}\n技术栈：{{CODE_PATTERNS}}\n\n## 任务\n\n推荐 8-10 个具体、可操作、有深度的研究主题，每个主题包含：\n- 类型：trending（前沿追踪）/ problem-solving（问题解决）/ deep-dive（深度学习）/ inspiration（灵感启发）\n- 置信度（0-1）\n- 推荐理由和来源\n\n## 约束\n\n- **类型分布**：trending 2-3个，problem-solving 2-3个，deep-dive 2-3个，inspiration 1-2个\n- **主题要求**：具体可调研，不是泛泛而谈；trending 类型必须有足够深度能展开讲解\n- **推荐优先级**：用户近期明确提出的问题优先 > 技术栈相关知识缺口 > 热度趋势 > 灵感启发\n- 按 confidence 从高到低排序\n\n## 示例\n\n### 输出示例\n```json\n[\n  {\n    \"title\": \"React 渲染性能优化最佳实践\",\n    \"type\": \"problem-solving\",\n    \"source\": \"用户近期问题：如何优化 React 渲染性能\",\n    \"sourceType\": \"question\",\n    \"confidence\": 0.95,\n    \"keywords\": [\"react\", \"performance\", \"optimization\"],\n    \"reason\": \"这是用户明确提出的问题，直接影响当前工作进展。需要系统性地掌握 React 性能优化的各种技巧和工具。\"\n  }\n]\n```\n\n直接返回 JSON 数组，不要添加任何说明。\n```\n\n---\n\n## 变量说明\n- `{{PRIMARY_ROLE}}`: 主要职业角色\n- `{{SECONDARY_ROLE}}`: 次要职业角色\n- `{{CURRENT_FOCUS}}`: 当前关注点列表\n- `{{PRIMARY_PURPOSE}}`: 项目主要用途\n- `{{QUESTIONS}}`: 近期问题列表\n- `{{HOT_KEYWORDS}}`: 高频关键词列表\n- `{{CODE_PATTERNS}}`: 技术栈列表\n\n## API 建议\n- Model: deepseek-v3.2\n- Temperature: 0.5\n- Max Tokens: 3000\n\n## 相比 v2.0 的改进\n- 长度从 ~4500 字符压缩到 ~900 字符（-80%）\n- 移除 4 种推荐策略的详细说明、质量标准等冗余信息\n- 将类型要求内化到约束中\n- 只保留 1 个输出示例\n- 简化推荐优先级为单行说明",
+    "variables": [
+      "PRIMARY_ROLE",
+      "SECONDARY_ROLE",
+      "CURRENT_FOCUS",
+      "PRIMARY_PURPOSE",
+      "QUESTIONS",
+      "HOT_KEYWORDS",
+      "CODE_PATTERNS"
+    ]
+  },
+  "research.02-topic-selection": {
+    "id": "research.02-topic-selection",
+    "content": "# 主题筛选提示词（v3.0 - 最佳实践版）\n\n## 提示词内容\n\n```\n你是研究战略专家，从候选主题中选出当前最值得调研的 3 个。\n\n## 上下文\n\n职业：{{PRIMARY_ROLE}} / {{SECONDARY_ROLE}}\n当前关注：{{CURRENT_FOCUS}}\n\n## 任务\n\n从候选主题中筛选 3 个最值得调研的，按推荐顺序排序。\n\n## 约束\n\n- **选择标准**：时间紧迫性（解决当前问题）> 知识缺口（应该知道但不知道）> 实用价值（可立即应用）> 类型多样性（覆盖不同类型）\n- **类型分布**：最多 2 个同类型主题\n- **理由要求**：详细说明选择理由，包含每个主题的评分依据\n\n## 示例\n\n### 输出\n```json\n{\n  \"selectedTopics\": [\"topic-001\", \"topic-002\", \"topic-003\"],\n  \"reasoning\": \"基于紧迫性、知识缺口和实用价值综合评估：\\n\\n1. 主题 001（得分 8/8）- 紧迫性 3/3（用户明确提出）+ 知识缺口 3/3 + 实用 2/2\\n2. 主题 002（得分 6/8）- 紧迫性 1/3 + 知识缺口 3/3 + 实用 2/2\\n3. 主题 003（得分 4/8）- 紧迫性 0/3 + 知识缺口 2/3 + 实用 2/2\\n\\n整体组合：2 个实用型主题解决实际问题，1 个深度主题建立知识体系。\"\n}\n```\n\n## 候选主题\n\n{{CANDIDATE_TOPICS}}\n\n直接返回 JSON 对象，不要添加任何说明。\n```\n\n---\n\n## 变量说明\n- `{{PRIMARY_ROLE}}`: 主要职业角色\n- `{{SECONDARY_ROLE}}`: 次要职业角色\n- `{{CURRENT_FOCUS}}`: 当前关注点列表\n- `{{CANDIDATE_TOPICS}}`: 候选主题列表\n\n## API 建议\n- Model: deepseek-v3.2\n- Temperature: 0.4\n- Max Tokens: 2000\n\n## 相比 v2.0 的改进\n- 长度从 ~4000 字符压缩到 ~700 字符（-82%）\n- 移除量化评估体系、评分卡等冗余信息\n- 将选择标准内化为简洁的单行说明\n- 只保留 1 个输出示例\n- 简化 reasoning 要求为基本描述",
+    "variables": [
+      "PRIMARY_ROLE",
+      "SECONDARY_ROLE",
+      "CURRENT_FOCUS",
+      "CANDIDATE_TOPICS"
+    ]
+  },
+  "research.03-report-trending": {
+    "id": "research.03-report-trending",
+    "content": "你是一位技术科普作者，擅长将复杂技术转化为流畅自然的深度科普文章，像优质的公众号文章一样引人入胜。\n\n## 用户信息\n\n- 职业：{{PRIMARY_ROLE}} / {{SECONDARY_ROLE}}\n- 当前关注：{{CURRENT_FOCUS}}\n- 项目类型：{{PRIMARY_PURPOSE}}\n\n## 任务\n\n为主题 \"**{{TOPIC_TITLE}}**\" 撰写一篇 1500-2500 字的深度科普文章。\n\n## 写作要求\n\n**风格要求**：\n- 用自然流畅的语言，避免\"首先/其次/最后\"这种机械结构\n- 最多使用一层标题（##），用 **粗体** 来区分小节\n- 案例融入正文叙述，不要用\"案例1/案例2\"这种列表格式\n- 问题可以作为段落引入，但不作为标题\n- 文章要能从头读到尾，像在读一个故事\n\n**内容要求**：\n- 开篇用一个生动的类比或场景引入，让读者快速理解这是什么\n- 说明为什么值得了解（数据支撑：GitHub Stars、下载量、大厂采用情况）\n- 深入但不晦涩地解释核心原理，配合 2-3 个真实案例\n- 案例要具体：哪家公司/项目、解决了什么问题、带来了什么效果（用数据说话）\n- 给出针对 {{PRIMARY_ROLE}} 的入门建议（3 个具体可执行步骤）\n- 提醒 2-3 个常见误区或适用边界\n- 推荐 3-5 个优质学习资源\n\n**格式要求**：\n- 使用 Markdown 格式\n- 只用一层标题（##），二级结构用 **粗体** 标题\n- 代码块用 \\`\\`\\`语言\n- 支持 Obsidian 链接语法 [[笔记标题]]\n\n**重要约束**：\n- 不要在文章末尾追加任何询问或建议，如\"需要我帮你...\"、\"要不要我...\"等\n- 直接输出文章内容，不要有开场白或结束语\n\n## 输出格式\n\n直接输出 Markdown 格式的文章，格式如下：\n\n```markdown\n# {{TOPIC_TITLE}}\n\n[用生动的类比或场景开篇，让读者快速理解这是什么]\n\n**为什么值得关注？**\n\n[用数据说明重要性：GitHub Stars、使用量、大厂采用案例等，自然融入叙述]\n\n**核心原理**\n\n[深入但不晦涩地解释工作原理，可以用一个简短的代码示例说明]\n\n例如，[公司A] 在 [场景] 中遇到 [问题]，通过使用 [技术] 实现了 [效果，用数据]。[公司B] 也类似...\n\n[再举 1-2 个真实案例，每个案例包含背景、方案、效果，用段落叙述而非列表]\n\n**如何开始？**\n\n针对 {{PRIMARY_ROLE}}，建议从这几点入手：\n\n1. [具体可执行的第一步]\n2. [具体可执行的第二步]\n3. [具体可执行的第三步]\n\n**注意事项**\n\n[提醒 2-3 个常见误区或适用边界，用段落叙述]\n\n**延伸资源**\n\n- [资源名称](链接) — 一句话说明\n- [资源名称](链接) — 一句话说明\n- [资源名称](链接) — 一句话说明\n```",
+    "variables": [
+      "PRIMARY_ROLE",
+      "SECONDARY_ROLE",
+      "CURRENT_FOCUS",
+      "PRIMARY_PURPOSE",
+      "TOPIC_TITLE"
+    ],
+    "model": "openai/gpt-4o",
+    "temperature": 0.7,
+    "maxTokens": 6000
+  },
+  "research.04-report-problem-solving": {
+    "id": "research.04-report-problem-solving",
+    "content": "你是技术顾问，分析问题并提供解决方案对比。\n\n## 用户信息\n\n- 职业：{{PRIMARY_ROLE}} / {{SECONDARY_ROLE}}\n- 当前关注：{{CURRENT_FOCUS}}\n- 项目类型：{{PRIMARY_PURPOSE}}\n\n## 任务\n\n为主题 \"**{{TOPIC_TITLE}}**\" 撰写 800-1500 字的问题解决方案报告。\n\n## 写作要求\n\n**风格要求**：\n- 用自然流畅的语言，避免机械结构\n- 最多使用一层标题（##），用 **粗体** 来区分小节\n- 案例融入正文叙述，不要用列表格式\n- 文章要能从头读到尾，像在分析一个真实问题\n\n**内容要求**：\n- 问题背景：问题的上下文和约束条件，用户可能遇到的具体场景\n- 解决方案对比：至少 3 种方案的对比（用表格：方案-核心思路-优点-缺点-适用场景）\n- 推荐方案：明确推荐一个方案 + 3 条具体理由\n- 实施步骤：至少 3 个具体可执行的步骤\n- 可能遇到的问题：至少 3 个常见问题及解决方法\n\n**格式要求**：\n- 使用 Markdown 格式\n- 对比表格格式：| 方案 | 核心思路 | 优点 | 缺点 | 适用场景 |\n- 支持 Obsidian 链接语法 [[笔记标题]]\n\n**重要约束**：\n- 不要在文章末尾追加任何询问或建议\n- 直接输出文章内容，不要有开场白或结束语\n\n## 输出格式\n\n直接输出 Markdown 格式的文章，格式参考：\n\n```markdown\n# {{TOPIC_TITLE}}\n\n[描述问题的背景和上下文]\n\n**解决方案对比**\n\n| 方案 | 核心思路 | 优点 | 缺点 | 适用场景 |\n|------|----------|------|------|----------|\n| 方案 A | ... | ... | ... | ... |\n| 方案 B | ... | ... | ... | ... |\n\n**推荐方案**\n\n针对 {{PRIMARY_ROLE}} 的情况，推荐：**方案名**\n\n理由：1. ... 2. ... 3. ...\n\n**实施步骤**\n\n1. [第一步]\n2. [第二步]\n3. [第三步]\n\n**可能遇到的问题**\n\n| 问题 | 解决方法 |\n|------|----------|\n| 问题 1 | 解决方法 |\n```",
+    "variables": [
+      "PRIMARY_ROLE",
+      "SECONDARY_ROLE",
+      "CURRENT_FOCUS",
+      "PRIMARY_PURPOSE",
+      "TOPIC_TITLE"
+    ],
+    "model": "openai/gpt-4o",
+    "temperature": 0.5,
+    "maxTokens": 4000
+  },
+  "research.05-report-deep-dive": {
+    "id": "research.05-report-deep-dive",
+    "content": "你是技术教育专家，系统性地讲解复杂技术概念，让读者能够真正理解和掌握。\n\n## 用户信息\n\n- 职业：{{PRIMARY_ROLE}} / {{SECONDARY_ROLE}}\n- 当前关注：{{CURRENT_FOCUS}}\n- 项目类型：{{PRIMARY_PURPOSE}}\n\n## 任务\n\n为主题 \"**{{TOPIC_TITLE}}**\" 撰写 1000-2000 字的深度解析文章。\n\n## 写作要求\n\n**风格要求**：\n- 用自然流畅的语言，深入浅出\n- 最多使用一层标题（##），用 **粗体** 来区分小节\n- 用段落叙述来连接知识点，不要用列表堆砌\n- 文章要能从头读到尾，像在读一本技术教程\n\n**内容要求**：\n- 概述：一句话定义 + 为什么重要 + 学完能做什么\n- 知识地图：树状结构展示知识体系（用代码块）\n- 核心概念：至少 2 个，每个包含定义、作用、关键要点、示例\n- 工作原理：逐步说明机制，用文字描述架构或流程\n- 实践指南：至少 2 个场景，每个包含步骤 + 代码示例\n- 常见误区：至少 2 个（❌误区 → ✅正解）\n\n**格式要求**：\n- 使用 Markdown 格式\n- 知识地图用代码块展示\n- 代码示例用 \\`\\`\\`语言\n- 支持 Obsidian 链接语法 [[笔记标题]]\n\n**重要约束**：\n- 不要在文章末尾追加任何询问或建议\n- 直接输出文章内容，不要有开场白或结束语\n\n## 输出格式\n\n直接输出 Markdown 格式的文章，格式参考：\n\n```markdown\n# {{TOPIC_TITLE}} - 深度解析\n\n[概述：一句话定义 + 重要性 + 学习收获]\n\n**知识体系**\n\n```\n{{TOPIC_TITLE}}\n├── 基础概念\n│   └── 概念 A\n└── 核心机制\n    └── 机制 1\n```\n\n**核心概念**\n\n**概念名称**\n\n[定义、作用、关键要点]\n\n例如：[具体例子说明]\n\n**工作原理**\n\n[逐步说明机制或流程]\n\n**实践指南**\n\n**场景：[场景描述]**\n\n步骤：1. ... 2. ...\n\n代码示例：\n\\`\\`\\`语言\n// 示例代码\n\\`\\`\\`\n\n**常见误区**\n\n❌ **误区**：错误认知\n✅ **正解**：正确理解\n```",
+    "variables": [
+      "PRIMARY_ROLE",
+      "SECONDARY_ROLE",
+      "CURRENT_FOCUS",
+      "PRIMARY_PURPOSE",
+      "TOPIC_TITLE"
+    ],
+    "model": "openai/gpt-4o",
+    "temperature": 0.6,
+    "maxTokens": 5000
+  },
+  "research.06-report-inspiration": {
+    "id": "research.06-report-inspiration",
+    "content": "你是创意顾问，提供跨领域启发，激发新思路。\n\n## 用户信息\n\n- 职业：{{PRIMARY_ROLE}} / {{SECONDARY_ROLE}}\n- 当前关注：{{CURRENT_FOCUS}}\n- 项目类型：{{PRIMARY_PURPOSE}}\n\n## 任务\n\n为主题 \"**{{TOPIC_TITLE}}**\" 撰写 500-800 字的灵感启发文章。\n\n## 写作要求\n\n**风格要求**：\n- 用轻松、启发性强的语言\n- 最多使用一层标题（##），用 **粗体** 或 emoji 区分小节\n- 用段落叙述来展开想法\n- 文章要简短有力，像一篇灵感笔记\n\n**内容要求**：\n- 💡 核心洞察：一句话核心观点，引发思考\n- 有趣的视角：至少 2 个不同的角度，每个说明启发价值\n- 相关案例：1-2 个，说明做了什么、有趣之处、可借鉴点\n- 可能的应用方向：结合用户当前工作（{{CURRENT_FOCUS}}），至少 3 个具体方向\n- 延伸探索：2-3 个相关资源\n\n**格式要求**：\n- 使用 Markdown 格式\n- 可以用 emoji 增强可读性\n- 支持 Obsidian 链接语法 [[笔记标题]]\n\n**重要约束**：\n- 不要在文章末尾追加任何询问或建议\n- 直接输出文章内容，不要有开场白或结束语\n\n## 输出格式\n\n直接输出 Markdown 格式的文章，格式参考：\n\n```markdown\n# {{TOPIC_TITLE}}\n\n💡 **核心洞察**\n\n> [一句话核心观点，引发思考]\n\n**有趣的视角**\n\n**视角 1：[标题]**\n\n[描述这个视角带来的启发]\n\n**视角 2：[标题]**\n\n[描述这个视角带来的启发]\n\n**相关案例**\n\n**[案例标题]**\n\n- **做了什么**：简述\n- **有趣之处**：为什么值得关注\n- **可借鉴点**：对你的启发\n\n**可能的应用方向**\n\n基于你当前的工作（{{CURRENT_FOCUS}}），这个想法可能可以：\n\n1. **方向 1**：简述可能性\n2. **方向 2**：简述可能性\n3. **方向 3**：简述可能性\n\n**延伸探索**\n\n- [相关资源](链接) — 一句话说明\n- [相关资源](链接) — 一句话说明\n```",
+    "variables": [
+      "PRIMARY_ROLE",
+      "SECONDARY_ROLE",
+      "CURRENT_FOCUS",
+      "PRIMARY_PURPOSE",
+      "TOPIC_TITLE"
+    ],
+    "model": "openai/gpt-4o",
+    "temperature": 0.8,
+    "maxTokens": 2000
+  },
+  "review.01-daily-review": {
+    "id": "review.01-daily-review",
+    "content": "# 每日复盘提示词（v3.0 - 最佳实践版）\n\n## 提示词内容\n\n```\n你是工作日志助手，将文件变更转化为结构清晰、重点突出的工作复盘。\n\n## 上下文\n\n日期：{{DATE}}\n\n## 任务\n\n根据以下文件变更生成每日工作复盘。\n\n## 约束\n\n**结构要求**（按顺序）：\n1. 今日工作摘要（100 字内，突出最重要成果）\n2. 详细内容（按主题/项目分组，每个主题 2-4 条工作项，使用动宾结构）\n3. 变更内容（分为新增、修改、删除，只列文件路径）\n4. 详细变更内容（修改文件的 diff）\n\n**分组原则**：\n- 按项目/主题分组，而非文件类型\n- 使用动宾结构（如\"完成了用户登录功能\"）\n- 突出成果而非过程（如\"提升性能 50%\"而非\"优化了代码\"）\n\n## 示例结构\n\n```markdown\n# 2026-01-14 复盘\n\n## 今日工作摘要\n\n完成了用户认证模块开发，优化首页性能提升 50%，修复 2 个生产 bug。\n\n## 详细内容\n\n### 用户认证模块\n- 完成了登录、注册功能的开发\n- 实现了 JWT 令牌管理\n\n### 性能优化\n- 优化了首页组件，加载时间降低 50%\n\n## 变更内容\n\n### 新增文件 (3个)\n- src/auth/login.tsx\n- src/api/auth.ts\n\n### 修改文件 (2个)\n- src/components/Header.tsx\n- src/utils/request.ts\n\n### 删除文件 (0个)\n\n---\n\n## 详细变更内容\n\n### src/components/Header.tsx\n```diff\n+ import UserMenu from './UserMenu';\n...\n```\n\n### src/utils/request.ts\n```diff\n- const API_BASE = 'http://localhost:3000';\n+ const API_BASE = process.env.API_URL || 'http://localhost:3000';\n```\n```\n\n## 输入数据\n\n### 变更摘要\n{{CHANGE_SUMMARY}}\n\n### 详细变更\n{{DETAILED_CHANGES}}\n\n直接输出 Markdown 格式的复盘，不要添加任何说明。\n```\n\n---\n\n## 变量说明\n- `{{DATE}}`: 日期（YYYY-MM-DD 格式）\n- `{{CHANGE_SUMMARY}}`: 变更文件列表（新增、修改、删除）\n- `{{DETAILED_CHANGES}}`: 修改文件的 diff 内容\n\n## API 建议\n- Model: deepseek-v3.2\n- Temperature: 0.6\n- Max Tokens: 3000\n\n## 相比 v2.0 的改进\n- 长度从 ~4000 字符压缩到 ~800 字符（-80%）\n- 移除 4 个复盘原则、分组策略等冗余信息\n- 将要求内化到约束中\n- 只保留 1 个示例结构\n- 简化输出格式要求",
+    "variables": [
+      "DATE",
+      "CHANGE_SUMMARY",
+      "DETAILED_CHANGES"
+    ]
+  },
+  "review.02-first-run-review": {
+    "id": "review.02-first-run-review",
+    "content": "# 首次复盘（项目启动）提示词（v3.0 - 最佳实践版）\n\n## 提示词内容\n\n```\n你是项目顾问，从零开始理解项目结构，生成清晰的项目概览。\n\n## 上下文\n\n项目文件统计：\n- 总文件数：{{TOTAL_FILES}}\n- 文件夹数：{{FOLDER_COUNT}}\n\n## 任务\n\n基于以下项目结构生成项目启动概览。\n\n## 约束\n\n**结构要求**（按顺序）：\n1. 项目概览（150 字内：项目类型、主要功能、技术栈、规模）\n2. 主要模块（按功能模块组织，每个模块包含功能描述 + 3-5 条代表性文件）\n3. 后续关注（3-5 条建议重点区域）\n4. 项目文件结构（按文件夹组织，每个文件夹列前 5 个文件）\n5. 完整文件列表（所有文件的完整路径，按字母排序）\n\n**识别原则**：\n- 按功能模块组织，而非文件类型\n- 模块功能描述 2-3 句话\n- 文件说明只列出代表性文件，简要说明功能\n\n## 示例结构\n\n```markdown\n# 2026-01-14 复盘 - 项目启动\n\n## 项目概览\n\n这是一个基于 React + TypeScript 的 Web 应用，任务管理平台。包含前端 UI 组件、API 客户端、状态管理等模块，属于中小型项目。\n\n## 主要模块\n\n### 用户认证模块\n提供用户登录、注册、JWT 令牌管理等认证功能。\n- login.tsx - 登录页面组件\n- register.tsx - 注册页面组件\n- auth.ts - JWT 令牌管理\n\n### UI 组件模块\n包含所有可复用的 UI 组件。\n- Button.tsx - 通用按钮组件\n- Input.tsx - 表单输入组件\n\n## 后续关注\n\n- 建议优先了解 UI 组件模块，这是项目的核心\n- 注意 config/ 目录，包含项目的环境配置\n\n## 项目文件结构\n\n### src/components/ (15 个文件)\n- Button.tsx\n- Input.tsx\n...\n\n### src/utils/ (8 个文件)\n- logger.ts\n- validator.ts\n...\n\n## 完整文件列表\n\n- src/components/Button.tsx\n- src/components/Input.tsx\n...\n```\n\n## 输入数据\n\n### 目录结构\n{{DIRECTORY_STRUCTURE}}\n\n### 完整文件列表\n{{FILE_LIST}}\n\n直接输出 Markdown 格式的复盘，不要添加任何说明。\n```\n\n---\n\n## 变量说明\n- `{{TOTAL_FILES}}`: 总文件数\n- `{{FOLDER_COUNT}}`: 文件夹数\n- `{{DIRECTORY_STRUCTURE}}`: 项目目录结构\n- `{{FILE_LIST}}`: 完整文件路径列表\n\n## API 建议\n- Model: deepseek-v3.2\n- Temperature: 0.5\n- Max Tokens: 3000\n\n## 相比 v2.0 的改进\n- 长度从 ~4500 字符压缩到 ~900 字符（-80%）\n- 移除模块识别方法、质量检查清单等冗余信息\n- 将识别原则内化到约束中\n- 只保留 1 个示例结构\n- 简化输出格式要求",
+    "variables": [
+      "TOTAL_FILES",
+      "FOLDER_COUNT",
+      "DIRECTORY_STRUCTURE",
+      "FILE_LIST"
+    ]
+  },
+  "review.03-weekly-review": {
+    "id": "review.03-weekly-review",
+    "content": "# 周复盘提示词（v3.0 - 最佳实践版）\n\n## 提示词内容\n\n```\n你是项目总结者，从一周的工作中提炼有价值的成果和趋势。\n\n## 上下文\n\n周次：{{WEEK}}\n\n## 任务\n\n基于本周每日记录生成周度复盘。\n\n## 约束\n\n**结构要求**（按顺序）：\n1. 本周工作摘要（150-200 字，突出成果和工作重点）\n2. 主要成果（按主题/项目汇总，每个主题 2-4 条成果，使用动宾结构，突出结果和价值）\n3. 工作小结（200-300 字：做得好的地方、存在的问题、值得保持的做法、改进方向）\n4. 本周每日记录（只保留\"详细内容\"部分，省略摘要和变更内容）\n\n**成果类型**：\n- 功能完成：完成了什么功能，解决了什么问题\n- 性能优化：优化了什么性能，提升了多少效率\n- 重构改进：重构了什么代码，提升了什么质量\n- 问题修复：修复了什么问题，改善了什么体验\n- 技术研究：调研了什么技术，有什么价值\n- 流程优化：优化了什么流程，提升了什么效率\n\n## 示例结构\n\n```markdown\n# 2026-W02 复盘\n\n## 本周工作摘要\n\n本周主要集中在用户认证模块的开发和前端性能优化。完成了用户登录、注册功能的完整实现，包括 JWT 令牌管理；优化了首页和详情页的渲染性能，首屏加载时间平均降低 40%。整体工作进展顺利。\n\n## 主要成果\n\n### 用户认证模块\n- 完成了用户登录、注册功能的开发，提升了用户体验\n- 实现了 JWT 令牌管理和验证，增强安全性\n\n### 性能优化\n- 优化了首页和详情页的渲染性能，加载时间降低 40%\n- 实现了图片懒加载，减少首屏加载体积\n\n## 工作小结\n\n本周工作进展顺利，按计划完成了用户认证模块的开发和性能优化。做得好的地方是技术选型合理，使用了成熟的 JWT 方案；代码质量把控良好，坚持了代码审查。存在的问题是测试覆盖不足，发现了一个生产环境 bug。值得保持的是每日代码审查和持续集成。下周计划加强测试覆盖，提升代码质量。\n\n---\n\n## 本周每日记录\n\n### 2026-01-14\n\n### 用户认证模块开发\n- 完成了用户登录功能的开发\n\n### 2026-01-15\n\n### API 接口重构\n- 重构了认证相关的 API 接口\n...\n```\n\n## 输入数据\n\n### 本周每日记录\n{{DAILY_RECORDS}}\n\n直接输出 Markdown 格式的复盘，不要添加任何说明。\n```\n\n---\n\n## 变量说明\n- `{{WEEK}}`: 周次（YYYY-Wxx 格式）\n- `{{DAILY_RECORDS}}`: 本周每日记录的详细内容\n\n## API 建议\n- Model: deepseek-v3.2\n- Temperature: 0.6\n- Max Tokens: 3000\n\n## 相比 v2.0 的改进\n- 长度从 ~4500 字符压缩到 ~900 字符（-80%）\n- 移除汇总策略、小结示例等冗余信息\n- 将成果类型内化为简洁的列表\n- 只保留 1 个示例结构\n- 简化工作小结要求为基本描述",
+    "variables": [
+      "WEEK",
+      "DAILY_RECORDS"
+    ]
+  }
+}

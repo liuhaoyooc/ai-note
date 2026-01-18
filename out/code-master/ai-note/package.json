@@ -1,0 +1,42 @@
+{
+  "name": "ai-note",
+  "version": "1.0.0",
+  "description": "AI-powered note management for Obsidian",
+  "main": "main.js",
+  "scripts": {
+    "prompts:sync": "node scripts/sync-prompts.mjs",
+    "prebuild": "npm run prompts:sync",
+    "build": "node esbuild.config.mjs production",
+    "watch": "node esbuild.config.mjs",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui",
+    "test:ai:real": "AI_MODE=real vitest",
+    "test:p0": "vitest run --grep '@P0'",
+    "test:p1": "vitest run --grep '@P1'",
+    "test:p2": "vitest run --grep '@P2'"
+  },
+  "keywords": [
+    "obsidian",
+    "plugin",
+    "ai",
+    "assistant"
+  ],
+  "author": "liuhaoyooc",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/diff": "^5.2.0",
+    "@types/node": "^20.10.0",
+    "@vitest/coverage-v8": "^4.0.17",
+    "@vitest/ui": "^4.0.17",
+    "esbuild": "^0.27.2",
+    "obsidian": "latest",
+    "typescript": "^5.3.0",
+    "vitest": "^4.0.17"
+  },
+  "dependencies": {
+    "diff": "^5.2.0",
+    "pako": "^2.1.0"
+  }
+}

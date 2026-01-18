@@ -1,0 +1,16 @@
+.archive-modal .suggestion-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+}
+
+.archive-modal .suggestion-item:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+.archive-modal .file-count {
+    font-size: 0.8em;
+    color: var(--text-muted);
+    margin-left: 8px;
+}
