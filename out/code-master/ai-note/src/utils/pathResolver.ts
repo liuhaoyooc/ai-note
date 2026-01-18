@@ -72,13 +72,18 @@ export class PathResolver {
 
     /**
      * 判断是否是插件数据目录路径
+     * 使用白名单检查，提高可维护性
      */
     private static isPluginDataPath(path: string): boolean {
-        return path.startsWith('data/') ||
-               path.startsWith('identity/') ||
-               path.startsWith('snapshots/') ||
-               path.startsWith('summaries/') ||
-               path.startsWith('folder-') ||
-               path.includes('data/cache/');
+        const pluginDataPrefixes = [
+            'data/',
+            'identity/',
+            'snapshots/',
+            'summaries/',
+            'folder-summaries/',
+            'research/',
+        ];
+
+        return pluginDataPrefixes.some(prefix => path.startsWith(prefix));
     }
 }
